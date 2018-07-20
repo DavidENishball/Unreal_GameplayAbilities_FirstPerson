@@ -45,6 +45,13 @@ class ACombatSimCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent* L_MotionController;
 
+
+
+	// Abilities:
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UCS_AbilityComponent* m_abilitySystemComponent;
+
 public:
 	ACombatSimCharacter();
 
@@ -79,6 +86,9 @@ public:
 	/** Whether to use motion controller location for aiming. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UGameplayAbility> debugAbility_primary;
 
 protected:
 	
@@ -131,6 +141,12 @@ protected:
 	 * @returns true if touch controls were enabled.
 	 */
 	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
+
+	// Debug
+	void UseAbility();
+
+	virtual void PossessedBy(AController* controller) override;
+
 
 public:
 	/** Returns Mesh1P subobject **/

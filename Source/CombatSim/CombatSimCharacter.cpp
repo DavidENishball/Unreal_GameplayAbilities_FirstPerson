@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "CS_AbilityComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -82,6 +83,8 @@ ACombatSimCharacter::ACombatSimCharacter()
 
 	// Uncomment the following line to turn motion controllers on by default:
 	//bUsingMotionControllers = true;
+
+	m_abilitySystemComponent = CreateDefaultSubobject<UCS_AbilityComponent>(TEXT("AbilitySystem"));
 }
 
 void ACombatSimCharacter::BeginPlay()
@@ -118,7 +121,10 @@ void ACombatSimCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACombatSimCharacter::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACombatSimCharacter::UseAbility);
+
+	// Bind fire event
+	PlayerInputComponent->BindAction("AltFire", IE_Pressed, this, &ACombatSimCharacter::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
@@ -136,6 +142,9 @@ void ACombatSimCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACombatSimCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACombatSimCharacter::LookUpAtRate);
+
+
+
 }
 
 void ACombatSimCharacter::OnFire()
@@ -298,3 +307,23 @@ bool ACombatSimCharacter::EnableTouchscreenMovement(class UInputComponent* Playe
 	
 	return false;
 }
+
+
+void ACombatSimCharacter::UseAbility()
+{
+
+		//FGameplayAbilitySpec newSpec = FGameplayAbilitySpec(debugAbility_primary->GetDefaultObject()));
+	this->m_abilitySystemComponent->GiveAbility(FGameplayAbilitySpec(debugAbility_primary.GetDefaultObject(), 0));
+
+
+	this->m_abilitySystemComponent->TryActivateAbilityByClass(debugAbility_primary);
+
+}
+
+void ACombatSimCharacter::PossessedBy(AController* controller)
+{
+	this->m_abilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	
+}
+
