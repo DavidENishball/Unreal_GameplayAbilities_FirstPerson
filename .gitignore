@@ -78,3 +78,8 @@ DerivedDataCache/*
 ./.vs/*
 *.opendb
 *.db
+.vs/
+.vs/*
+
+# Temp folder
+enc_temp_folder/
