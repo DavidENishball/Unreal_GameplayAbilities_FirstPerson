@@ -313,8 +313,20 @@ void ACombatSimCharacter::UseAbility()
 {
 
 		//FGameplayAbilitySpec newSpec = FGameplayAbilitySpec(debugAbility_primary->GetDefaultObject()));
+
+	if (debugAbility_primary == nullptr)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("No debugAbility_primary ability Equipped"));
+		}
+		return;
+	}
+
 	this->m_abilitySystemComponent->GiveAbility(FGameplayAbilitySpec(debugAbility_primary.GetDefaultObject(), 0));
 
+	// Can be used to remove an ability later.
+	// this->m_abilitySystemComponent->ClearAbility()
 
 	this->m_abilitySystemComponent->TryActivateAbilityByClass(debugAbility_primary);
 
