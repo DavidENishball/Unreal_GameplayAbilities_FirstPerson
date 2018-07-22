@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Ab_Debug_Shoot.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayTagContainer.h"
+#include "GameplayTagsManager.h"
+
 
 
 
@@ -69,8 +73,14 @@ void UAb_Debug_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 			projectileSpawnTransform = ActorInfo->AvatarActor->GetTransform();
 		}
 
-		AActor* projectile = GetWorld()->SpawnActor<AActor>(projectileClass, projectileSpawnTransform);
+		FActorSpawnParameters parameters;
+		parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		AActor* projectile = GetWorld()->SpawnActor<AActor>(projectileClass, projectileSpawnTransform, parameters);
 		
+		UAbilitySystemComponent* ownerComponent = GetAbilitySystemComponentFromActorInfo();
+
+		FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("GameplayCue.Weapon.Fire");
+		ownerComponent->ExecuteGameplayCue(fireTag);
 	}
 
 }

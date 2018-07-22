@@ -173,6 +173,8 @@ void ACombatSimCharacter::OnFire()
 
 				// spawn the projectile at the muzzle
 				World->SpawnActor<ACombatSimProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+
+				
 			}
 		}
 	}
