@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameplayCue_WeaponFire.h"
+#include "CombatSimCharacter.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 bool AGameplayCue_WeaponFire::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
@@ -26,6 +29,40 @@ bool AGameplayCue_WeaponFire::OnExecute_Implementation(AActor* MyTarget, const F
 		
 
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, *displayString);
+	}
+
+
+
+	// Play effects
+	if (ACombatSimCharacter* character = Cast<ACombatSimCharacter>(MyTarget))
+	{
+		// try and play the sound if specified
+		if (character->FireSound != NULL)
+		{
+			UGameplayStatics::PlaySoundAtLocation(character, character->FireSound, character->GetActorLocation());
+		}
+
+		// try and play a firing animation if specified
+		if (character->FireAnimation != NULL)
+		{
+			// Get the animation object for the arms mesh
+			// need to search since it's not directly available.
+
+
+			TArray<UActorComponent *> componentsByTag = character->GetComponentsByTag(USkeletalMeshComponent::StaticClass(), FName("GameplayCue.Weapon.Fire"));
+			for (UActorComponent* c : componentsByTag)
+			{
+				USkeletalMeshComponent* skeletalMeshComponent = Cast<USkeletalMeshComponent>(c);
+				if (!skeletalMeshComponent)
+				{
+					continue;
+				}
+				if (UAnimInstance* AnimInstance = skeletalMeshComponent->GetAnimInstance())
+				{
+					AnimInstance->Montage_Play(character->FireAnimation, 1.f);
+				}
+			}
+		}
 	}
 	
 

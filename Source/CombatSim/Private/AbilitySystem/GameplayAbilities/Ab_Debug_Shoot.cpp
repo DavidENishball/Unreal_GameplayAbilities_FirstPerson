@@ -60,6 +60,8 @@ void UAb_Debug_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 			{
 				// Found a scene component with the right tag.
 				FTransform componentTransform = firstComponent->GetComponentTransform();
+
+
 				projectileSpawnTransform = firstComponent->GetComponentTransform();
 			}
 			else
@@ -71,6 +73,13 @@ void UAb_Debug_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		else
 		{
 			projectileSpawnTransform = ActorInfo->AvatarActor->GetTransform();
+		}
+
+
+		if (APawn* pawn = Cast<APawn>(ActorInfo->AvatarActor))
+		{
+			// Use pawn's rotation value.
+			projectileSpawnTransform.SetRotation(FQuat(pawn->GetControlRotation()));
 		}
 
 		FActorSpawnParameters parameters;
